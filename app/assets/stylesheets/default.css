@@ -48,7 +48,7 @@ table#movies th, table#movies td {
   padding: 4px;
   text-align: left;
 }
-table #movies th.hilite {
+table#movies th.hilite {
   background-color: yellow;
 }
 #notice #warning {
