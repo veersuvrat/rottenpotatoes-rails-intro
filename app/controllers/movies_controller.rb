@@ -12,14 +12,15 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    if params.has_key?(:ratings)
-      selected_ratings = params[:ratings].keys
+    @selected_ratings = params[:ratings]
+    if @selected_ratings.nil?
+      @selected_ratings = @all_ratings
     else
-      selected_ratings = Movie.all_ratings
+      @selected_ratings = @selected_ratings.keys
     end
     @title_class = ""
     @date_class = ""
-    @movies = Movie.where({rating: selected_ratings})
+    @movies = Movie.where({rating: [@selected_ratings]})
     if params.has_key?(:sort)
       if params[:sort] == "title"
         @movies = @movies.order(:title)
