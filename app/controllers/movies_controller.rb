@@ -13,15 +13,23 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     temp_ratings = params[:ratings]
+    fresh = {}
+
     if temp_ratings.nil?
+      #No ratings from current event
       if session[:selected_ratings].nil?
+        #No ratings stored in session
         temp_ratings = @all_ratings
       else
+        #Ratings are retrieved from the session
         temp_ratings = session[:selected_ratings]
+        fresh[:ratings] = temp_ratings
       end
     else
+      #Some ratings were selected during current event
       temp_ratings = temp_ratings.keys
     end
+
     @selected_ratings = temp_ratings
     session[:selected_ratings] = temp_ratings
     @title_class = ""
@@ -31,7 +39,9 @@ class MoviesController < ApplicationController
     if params.has_key?(:sort)
       sort = params[:sort].to_sym
     elsif not session[:sort].nil?
+      #Sort based on what's stored in the session
       sort = session[:sort].to_sym
+      fresh[:sort] = sort
     end
     if not sort.nil?
         session[:sort] = sort
@@ -42,6 +52,11 @@ class MoviesController < ApplicationController
         @date_class = "hilite"
         @movies = @movies.order(:release_date)
       end
+    end
+
+    if not fresh == {}
+        flash.keep
+        redirect_to :sort => sort, :ratings => Hash[@selected_ratings.map {|rating| [rating, 1]}] and return
     end
   end
 
